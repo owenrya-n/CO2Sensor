@@ -1,0 +1,2 @@
+import pymeasure
+pymeasure.__version__
