@@ -31,3 +31,6 @@ def record(voltage, current, resistance, err):
 def plot(resistance,current,error):
     matplotlib.pyplot.plot(resistance,current)
     matplotlib.pyplot.errorbar(resistance,current,error,fmt='o')
+
+def plot2(resistance,current,error):
+    matplotlib.pyplot.plot(resistance,current)

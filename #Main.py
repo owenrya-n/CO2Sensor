@@ -14,7 +14,7 @@ import Vars
 
 #initialization
 Logger.startup
-Logger.alloc(Vars.minI, Vars.maxI, Vars.data_points)
+Logger.alloc(Vars.minI, Vars.maxI, Vars.data_points, Vars.Constant_Current, Vars.data_points_2)
 
 
 #record data

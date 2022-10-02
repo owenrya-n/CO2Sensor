@@ -5,6 +5,7 @@
 ###################################################
 
 #import statements
+from turtle import Vec2D
 import Vars
 from pymeasure.instruments.keithley import Keithley2400
 import numpy
@@ -24,9 +25,13 @@ def startup():
     sourcemeter.set_buffer(Vars.avgs)
     print("connected to Keithley2400 sourcemeter")
 
-def alloc(Imin, Imax, Res):
+def alloc(Imin, Imax, Res, CC, Resolution):
     global I 
-    I = numpy.linspace(Imin, Imax, Res)
+    I = numpy.linspace(Imin, Imax, Res) #ramp current 
+    global I2
+    I2 = numpy.zeros(Resolution)+CC #constant current 
+    global V2 
+    V2 = numpy.zeros_like(I2)
     global V
     V = numpy.zeros_like(I)
     global V_dev 
@@ -40,7 +45,7 @@ def alloc(Imin, Imax, Res):
 
 def measure(MRes):
     for k in range(MRes):
-        sourcemeter.current = alloc.I[k]
+        sourcemeter.current = I[k]
         sourcemeter.reset_buffer()
         sleep(Vars.delay)
         sourcemeter.start_buffer()
@@ -49,6 +54,12 @@ def measure(MRes):
         V_dev[k] = sourcemeter.standard_devs
     print("success")
 
+def measureCC(timestep,Resolution):
+    for j in range(Resolution):
+        sourcemeter.current = I2[j]
+        V2[j] = sourcemeter.measure_voltage
+        sleep(timestep)
+    
 def shutdown():
     sourcemeter.shutdown()
     del I; del V; del V_dev; del R; del R_dev
