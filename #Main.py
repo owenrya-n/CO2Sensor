@@ -1,9 +1,3 @@
-###################################################
-# Extreme Environment Microsystems Laboratory     #
-# Stanford University                             #
-# Owen Ryan 9-29-2022                             #
-###################################################
-
 #Current setup characterizes resistance at varying currents
 
 

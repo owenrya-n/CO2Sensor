@@ -1,9 +1,3 @@
-###################################################
-# Extreme Environment Microsystems Laboratory     #
-# Stanford University                             #
-# Owen Ryan 9-29-2022                             #
-###################################################
-
 #import statements
 from turtle import Vec2D
 import Vars
