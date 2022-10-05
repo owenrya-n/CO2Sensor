@@ -1,26 +1,26 @@
 #import statements
-from turtle import Vec2D
-import Vars
 from pymeasure.instruments.keithley import Keithley2400
 import numpy
 from time import sleep
+import vars
 
 
-#connect to sourcemeter
-def startup():
-    global sourcemeter 
-    sourcemeter = Keithley2400(Vars.kport)
-    sourcemeter.id
-    sourcemeter.reset()
-    sourcemeter.use_front_terminals()
-    sourcemeter.measure_voltage()
-    sourcemeter.config_current_source()
-    sleep(Vars.delay) 
-    sourcemeter.set_buffer(Vars.avgs)
-    print("connected to Keithley2400 sourcemeter")
+
+#connect to Sourcemeter
+def Startup():
+    global Sourcemeter 
+    Sourcemeter = Keithley2400(vars.kport)
+    Sourcemeter.id
+    Sourcemeter.reset()
+    Sourcemeter.use_front_terminals()
+    Sourcemeter.measure_voltage()
+    Sourcemeter.config_current_source()
+    sleep(vars.delay) 
+    Sourcemeter.set_buffer(vars.avgs)
+    print("connected to Keithley2400 Sourcemeter")
 
 def alloc(Imin, Imax, Res, CC, Resolution):
-    global I 
+    global I
     I = numpy.linspace(Imin, Imax, Res) #ramp current 
     global I2
     I2 = numpy.zeros(Resolution)+CC #constant current 
@@ -39,22 +39,22 @@ def alloc(Imin, Imax, Res, CC, Resolution):
 
 def measure(MRes):
     for k in range(MRes):
-        sourcemeter.current = I[k]
-        sourcemeter.reset_buffer()
-        sleep(Vars.delay)
-        sourcemeter.start_buffer()
-        sourcemeter.wait_for_buffer()
-        V[k] = sourcemeter.means
-        V_dev[k] = sourcemeter.standard_devs
+        Sourcemeter.current = I[k]
+        Sourcemeter.reset_buffer()
+        sleep(vars.delay)
+        Sourcemeter.start_buffer()
+        Sourcemeter.wait_for_buffer()
+        V[k] = Sourcemeter.means
+        V_dev[k] = Sourcemeter.standard_devs
     print("success")
 
 def measureCC(timestep,Resolution):
     for j in range(Resolution):
-        sourcemeter.current = I2[j]
-        V2[j] = sourcemeter.measure_voltage
+        Sourcemeter.current = I2[j]
+        V2[j] = Sourcemeter.measure_voltage
         sleep(timestep)
     
 def shutdown():
-    sourcemeter.shutdown()
+    Sourcemeter.shutdown()
     del I; del V; del V_dev; del R; del R_dev
     print("shutdown")
