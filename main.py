@@ -4,10 +4,12 @@
 #import statements
 import logger
 import vis
-import vars
+import varis
 
 #initialization
 logger.Startup
+logger.alloc
+logger.measure
 #Logger.alloc(Vars.minI, Vars.maxI, Vars.data_points, Vars.Constant_Current, Vars.data_points_2)
 
 
