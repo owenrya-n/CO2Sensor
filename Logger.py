@@ -1,55 +1,34 @@
 #import statements
 from pymeasure.instruments.keithley import Keithley2400
-import numpy
+import numpy as np
 from time import sleep
 import varis
 
-
-
 #connect to Sourcemeter
-def Startup():
-    global Sourcemeter 
-    Sourcemeter = Keithley2400(varis.kport)
-    ID = Sourcemeter.id
-    Sourcemeter.reset()
-    Sourcemeter.use_front_terminals()
-    Sourcemeter.measure_current()
-    sleep(varis.delay) 
-    Sourcemeter.set_buffer(varis.avgs)
-    print("connected to Keithley2400 Sourcemeter")
+def Startup(port): #use arrays
+    global srcm
+    srcm = [None] * len(port)
+    for k in range(0,2):
+        srcm[k] = Keithley2400(port[k])
+        ID = srcm[k].id
+        srcm[k].reset()
+        srcm[k].use_front_terminals()
+        srcm[k].apply_voltage()
+        srcm[k].source_voltage_range=varis.svr
+        srcm[k].compliance_current=varis.comc
+        srcm[k].enable_source()
+    print("CV Front Terminals Configured")
 
-def alloc(Imin, Imax, Res, CC, Resolution):
-    global I
-    I = numpy.linspace(Imin, Imax, Res) #ramp current 
-    global I2
-    I2 = numpy.zeros(Resolution)+CC #constant current 
-    global V2 
-    V2 = numpy.zeros_like(I2)
-    global V
-    V = numpy.zeros_like(I)
-    global V_dev 
-    V_dev = numpy.zeros_like(I)
-    global R
-    R = numpy.zeros_like(I)
-    global R_dev
-    R_dev = numpy.zeros_like(I)
+def alloc(pts):
+    global Vsource
+    Vsource=np.zeros(pts)
     print("allocation successful")
     print("memory allocated")
 
-def measure(MRes):
-    for k in range(MRes):
-        Sourcemeter.current = I[k]
-        Sourcemeter.reset_buffer()
-        sleep(varis.delay)
-        Sourcemeter.start_buffer()
-        Sourcemeter.wait_for_buffer()
-        V[k] = Sourcemeter.means
-        V_dev[k] = Sourcemeter.standard_devs
-    print("success")
 
-def measureCC(timestep,Resolution):
+def measureCVL(idet,timestep,Resolution):
     for j in range(Resolution):
-        Sourcemeter.current = I2[j]
+        srcm[idet].current = I2[j]
         V2[j] = Sourcemeter.measure_voltage
         sleep(timestep)
     
