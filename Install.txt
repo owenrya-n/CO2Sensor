@@ -1,0 +1,18 @@
+% Necessary Software to Interface with keithley through vscode
+% Install Visual Studio code
+% Install Anaconda
+% Install Git
+% Clone Repository
+% conda install -c conda-forge pymeasure
+% conda install numpy
+% conda install -c anaconda numpy
+% conda install -c anaconda pandas
+% Vscode install python
+% Vscode install pylint
+% https://www.tek.com/en/support/software/driver/4-0-0
+% Select linter pylint
+% Select interpreter conda
+% Open a new terminal
+% terminal select default terminal command prompt
+% $ pip install -U pyvisa
+
