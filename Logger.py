@@ -1,4 +1,5 @@
 #import statements
+from os import times
 from pymeasure.instruments.keithley import Keithley2400
 import numpy as np
 from time import sleep
@@ -8,7 +9,7 @@ import varis
 def Startup(port): #use arrays
     global srcm
     srcm = [None] * len(port)
-    for k in range(0,2):
+    for k in range(0,len(port)):
         srcm[k] = Keithley2400(port[k])
         ID = srcm[k].id
         srcm[k].reset()
@@ -19,20 +20,30 @@ def Startup(port): #use arrays
         srcm[k].enable_source()
     print("CV Front Terminals Configured")
 
-def alloc(pts):
-    global Vsource
-    Vsource=np.zeros(pts)
-    print("allocation successful")
-    print("memory allocated")
 
+def measureCVL(idet,timestep,pts,voltage):
+    time = np.linspace(0,timestep*pts,pts)
+    global times
+    times = np.reshape(time, (pts,1))
 
-def measureCVL(idet,timestep,Resolution):
-    for j in range(Resolution):
-        srcm[idet].current = I2[j]
-        V2[j] = Sourcemeter.measure_voltage
-        sleep(timestep)
-    
-def shutdown():
-    Sourcemeter.shutdown()
-    del I; del V; del V_dev; del R; del R_dev
-    print("shutdown")
+    for k in range(0,len(idet)):
+        srcm[k].measure_current()
+        srcm[k].ramp_to_voltage(voltage)
+    global ICVL
+    ICVL=np.empty((pts,len(idet)), dtype=np.float)
+    global VCVL
+    VCVL=np.empty_like(ICVL)
+    print('start')
+    for j in range(pts):
+        for f in range(0,len(idet)):
+            ICVL[j,f] = srcm[f].current
+            VCVL[j,f] = srcm[f].source_voltage
+        sleep(timestep)   
+    global RCVL
+    RCVL=np.empty((pts,len(idet)+1), dtype=np.float)
+    RCVL[:,2]=np.true_divide(varis.svr,ICVL[:,1])
+    RCVL[:,1]=np.true_divide(varis.svr,ICVL[:,0])#np.true_divide(varis.svr,ICVL[:,:1]) # NEED LOOP OR COPY PASte
+    RCVL[:,:1]=times # DOES NOT YET SCALE WITH PORTS CONNECTED.
+def shutdown(port):
+    for k in range(0,len(port)):
+        srcm[k].shutdown()

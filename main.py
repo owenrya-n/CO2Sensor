@@ -1,24 +1,26 @@
-#Current setup characterizes resistance at varying currents
-
-
-#import statements
+# Import necessary packages
+from pymeasure.instruments.keithley import Keithley2400
 import logger
-import vis
 import varis
+import matplotlib.pyplot as map
+from time import sleep
 
-#initialization
-logger.Startup
-logger.alloc
-logger.measure
-#Logger.alloc(Vars.minI, Vars.maxI, Vars.data_points, Vars.Constant_Current, Vars.data_points_2)
+#collect data
+logger.Startup(varis.kport)
+logger.measureCVL(varis.kport,varis.ts,varis.points,varis.svr)
 
+#shut down
+logger.shutdown(varis.kport)  
 
-#record data
-#Logger.measure(Vars.data_points)
-#Vis.eval(Logger.I,Logger.V,Logger.V_dev)
-#Vis.record(Logger.V,Logger.I,Logger.R,Logger.R_dev)
+#store data
+#print(logger.ICVL, file=varis.data)
+#print(logger.VCVL, file=varis.data)    
+print(logger.RCVL, file=varis.data)
+print(logger.times)
 
-#plot
-#Vis.plot(Logger.R,Logger.I,Logger.R_dev)
-#shutdown
-#Logger.shutdown
+#plot saved data
+map.plot(logger.RCVL[:,0],logger.RCVL[:,1])
+map.plot(logger.RCVL[:,0],logger.RCVL[:,2])
+map.style.use('_mpl-gallery')
+map.show()
+
