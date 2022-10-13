@@ -15,4 +15,6 @@
 % Open a new terminal
 % terminal select default terminal command prompt
 % $ pip install -U pyvisa
+% git config --global user.email "you@example.com"
+% git config --global user.name "Your Name"
 
