@@ -40,9 +40,13 @@ def measureCVL(idet,timestep,pts,voltage):
             VCVL[j,f] = srcm[f].source_voltage
         sleep(timestep)   
     global RCVL
-    RCVL=np.empty((pts,len(idet)+1), dtype=np.float)
-    RCVL[:,2]=np.true_divide(varis.svr,ICVL[:,1])
-    RCVL[:,1]=np.true_divide(varis.svr,ICVL[:,0])#np.true_divide(varis.svr,ICVL[:,:1]) # NEED LOOP OR COPY PASte
+    RCVL=np.empty((pts,3*len(idet)+1), dtype=np.float)
+    RCVL[:,5]=varis.svr
+    RCVL[:,2]=varis.svr
+    RCVL[:,4]=ICVL[:,1]
+    RCVL[:,1]=ICVL[:,0]
+    RCVL[:,6]=np.true_divide(varis.svr,ICVL[:,1])
+    RCVL[:,3]=np.true_divide(varis.svr,ICVL[:,0])#np.true_divide(varis.svr,ICVL[:,:1]) # NEED LOOP OR COPY PASte
     RCVL[:,:1]=times # DOES NOT YET SCALE WITH PORTS CONNECTED.
 def shutdown(port):
     for k in range(0,len(port)):

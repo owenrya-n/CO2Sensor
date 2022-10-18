@@ -17,4 +17,8 @@
 % $ pip install -U pyvisa
 % git config --global user.email "you@example.com"
 % git config --global user.name "Your Name"
-
+# DATA FORMAT:
+# [[time][Resistance1][voltage1][current1][resistance2][voltage2][current2]...
+#  [time2][Resistance1][voltage1][current1][resistance2][voltage2][current2]...
+#  [time3][Resistance1][voltage1][current1][resistance2][voltage2][current2]
+# ]
