@@ -48,6 +48,8 @@ def measureCVL(idet,timestep,pts,voltage):
     RCVL[:,6]=np.true_divide(varis.svr,ICVL[:,1])
     RCVL[:,3]=np.true_divide(varis.svr,ICVL[:,0])#np.true_divide(varis.svr,ICVL[:,:1]) # NEED LOOP OR COPY PASte
     RCVL[:,:1]=times # DOES NOT YET SCALE WITH PORTS CONNECTED.
+
+    
 def shutdown(port):
     for k in range(0,len(port)):
         srcm[k].shutdown()
