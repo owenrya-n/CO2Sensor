@@ -1,5 +1,4 @@
 % Necessary Software to Interface with keithley through vscode
-% Install Visual Studio code
 % Install Anaconda
 % Install Git
 % Clone Repository
