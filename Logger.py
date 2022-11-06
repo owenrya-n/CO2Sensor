@@ -53,8 +53,8 @@ def measureCVL(idet,timestep,pts,voltage):
 
 def save(arrayname,filename): 
     frame=pd.DataFrame(arrayname)
-    if(len(arrayname[1,:]))==7:
-        frame.columns=['time(s)','I1','V1','R1','I2','V2','R2']
+    #if(len(arrayname[0,:]))==7:
+    #    frame.columns=['time(s)','I1','V1','R1','I2','V2','R2']
     frame.to_csv(filename)
     print('Save Successful')
 
@@ -75,28 +75,81 @@ def measureSIV(loc,minV,maxV,pts): #deprecated
     print('IV Profile Generated')
 
 def measureRCTC(idet,resistance,Vin,pts,Htime,Ltime):
-    global HVoltages
-    global LVoltages
-    global Distimes
-    global Capacitances
-    HVoltages = np.zeros(len(idet),pts)
-    LVoltages = np.zeros(len(idet),pts)
-    Distimes = np.zeros(1,pts)+Ltime
-    Capacitances = np.zeros(len(idet),pts)
+    #global HVoltages
+    #global LVoltages
+    #global Distimes
+    #global Capacitances
+    totals = np.zeros(((len(idet)+1),pts))
+    HVoltages = np.zeros((len(idet),pts))
+    LVoltages = np.zeros((len(idet),pts))
+    Distimes = np.zeros((1,pts))+Ltime
+    Capacitances = np.zeros((len(idet),pts))
     for k in range(0,len(idet)):
-        srcm[k].measure_voltage()
+        srcm[0].measure_voltage()
     for j in range(0,pts): #this is bad I need to fix it
         for l in range(0,len(idet)):
-            srcm[l].ramp_to_voltage(Vin,1,0)#can I set this to 0.0?
+            srcm[l].output_off_state='ZERO'
+            srcm[l].ramp_to_voltage(Vin,2,.01)#,1,0.1)#can I set this to 0.0?
             sleep(Htime) #set this to something appropriate
             HVoltages[l,j]=srcm[l].voltage
-        for n in range(0,len(idet)): #definitely need to restructure this
-            srcm[n].ramp_to_voltage(0,1,0)#can I set this to 0.0?
-            sleep(Ltime) #set this to something appropriate
-            LVoltages[n,j]=srcm[n].voltage
-    Capacitances = np.reciprocal(np.log(np.divide(HVoltages,LVoltages)))*(-1)*Ltime/resistance
-    
+            #srcm[k].compliance_current=.001
+            srcm[l].disable_source()#srcm[l].ramp_to_voltage(0,2,.01)#can I set this to 0.0?
+            sleep(Ltime)
+            LVoltages[l,j]=srcm[l].voltage
+            srcm[l].enable_source()#sleep(Ltime) #set this to something appropriate
+            print(HVoltages[l,j])
+            print(LVoltages[l,j])
+            #srcm[k].compliance_current=varis.comc
+            srcm[l].enable_source()
+            
+            #srcm[l].output_off_state='ZERO'
+            #srcm[l].enable_source()
+            
+        #for n in range(0,len(idet)): #definitely need to restructure this
+            
+            
+    Capacitances = np.transpose(np.reciprocal(np.log(np.divide(HVoltages,LVoltages)))*(-1)*Ltime/resistance)
+    timeC= np.transpose(np.reciprocal(np.log(np.divide(HVoltages,LVoltages))))
+    #totals[:1,:]=Distimes
+    #for q in range(0,len(idet)):
+    #    totals[:,q+1]=Capacitances[:,q]
+    #return totals
+    #return np.transpose(LVoltages)
+    return np.transpose(LVoltages)
     
 def shutdown(port):
     for k in range(0,len(port)):
         srcm[k].shutdown()
+
+def impedance(idet,Vmax,pts,timestep):
+    for k in range(0,len(idet)):
+        # Loop through each current point, measure and record the voltage
+        sleep(0.1)
+        srcm[k].measure_current()
+        times=np.linspace(0,pts*timestep,pts)
+        phase=np.sin(np.linspace(0,12*np.pi,pts))
+        currents=np.zeros_like(phase)
+        output=np.zeros([2,pts])
+        voltage=np.zeros_like(phase)
+        
+        
+        for i in range(pts):
+            voltage[i]=Vmax*np.sin(phase[i])
+            srcm[k].source_voltage = voltage[i]
+            
+            currents[i] = srcm[k].current
+            sleep(timestep)
+            #srcm[k].reset_buffer()
+            #srcm[k].wait_for_buffer()
+            
+            #srcm[k].stop_buffer()
+
+    capacitances=np.divide(currents/0.0001,(Vmax/(pts*timestep)))
+    output[0,:]=times
+    output[1,:]=currents
+    return output
+
+
+        
+
+
