@@ -1,5 +1,5 @@
 #Initialization
-kport = ["GPIB::1"] #sourcemeter external port
+kport = ["GPIB::2"] #sourcemeter external port
 #kport = ["GPIB::1","GPIB::2"] #sourcemeter external port
 svr = 2 #source voltage range
 comc=.1 #compliance current

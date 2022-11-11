@@ -11,7 +11,7 @@ logger.Startup(varis.kport)
 #logger.measureSIV(1,-1,1,50)
 #capt = logger.measureRCTC(varis.kport,varis.resistance,varis.svr,varis.points,varis.Ht,varis.Lt)
 #shut down
-ct=logger.impedance(varis.kport,2,50,.001)
+ct=logger.impedance(varis.kport,1,.3,2,.01)
 logger.shutdown(varis.kport)  
 
 #store data   

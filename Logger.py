@@ -121,32 +121,37 @@ def shutdown(port):
     for k in range(0,len(port)):
         srcm[k].shutdown()
 
-def impedance(idet,Vmax,pts,timestep):
+def impedance(idet,Vmax,period,duration,timestep):
     for k in range(0,len(idet)):
         # Loop through each current point, measure and record the voltage
         sleep(0.1)
         srcm[k].measure_current()
-        times=np.linspace(0,pts*timestep,pts)
-        phase=np.sin(np.linspace(0,12*np.pi,pts))
+        points=int(duration/timestep)
+
+        tloc=np.linspace(0,duration,points)
+        phase=np.sin(2*np.pi*tloc/period)
+        #phase=np.sin(np.linspace(0,5*np.pi,pts))
         currents=np.zeros_like(phase)
-        output=np.zeros([2,pts])
+        output=np.zeros([3,points])
         voltage=np.zeros_like(phase)
+        print(tloc/period)
+        print(phase)
+        voltage=Vmax+Vmax*phase
         
-        
-        for i in range(pts):
-            voltage[i]=Vmax*np.sin(phase[i])
-            srcm[k].source_voltage = voltage[i]
+        for i in range(points):
             
+            srcm[k].source_voltage = voltage[i]
             currents[i] = srcm[k].current
-            sleep(timestep)
+            #sleep(.01)
             #srcm[k].reset_buffer()
             #srcm[k].wait_for_buffer()
             
             #srcm[k].stop_buffer()
 
-    capacitances=np.divide(currents/0.0001,(Vmax/(pts*timestep)))
-    output[0,:]=times
-    output[1,:]=currents
+    #capacitances=np.divide(currents/0.0001,(Vmax/(pts*timestep)))
+    output[0,:]=tloc
+    output[1,:]=voltage-Vmax
+    output[2,:]=currents
     return output
 
 

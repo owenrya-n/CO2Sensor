@@ -29,4 +29,5 @@ def CTplot(CT):
     map.suptitle('Current with Respect to time')
     for k in range(len(varis.kport)):
         map.plot(CT[0,:],CT[1,:])
+        map.plot(CT[0,:],CT[2,:])
     map.show()
